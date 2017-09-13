@@ -1,43 +1,16 @@
-{% set stunnel = salt['pillar.get']('stunnel:config', {}) -%}
-{% from "stunnel/map.jinja" import stunnel as stunnel_map with context -%}
+{% from "stunnel/map.jinja" import stunnel with context -%}
 # THIS FILE IS MANAGED BY SALT. DO NOT EDIT DIRECTLY
 # defaults passed via context from map.jinja
 
-{%- if 'home' in stunnel %}
-chroot = {{ stunnel['home'] }}
-{% endif %}
-pid = {{ stunnel_map.pid_dir }}/stunnel.pid
-
-setuid = {{ stunnel.get('user', stunnel_map.default_user) }}
-setgid = {{ stunnel.get('group', stunnel_map.default_group) }}
-
-sslVersion = {{ stunnel.get('sslVersion', "all") }}
-ciphers = {{ stunnel.get('ciphers', 'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-DSS-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDH-RSA-AES256-GCM-SHA384:ECDH-ECDSA-AES256-GCM-SHA384:AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:DHE-RSA-AES128-GCM-SHA256:ECDH-RSA-AES128-GCM-SHA256:ECDH-ECDSA-AES128-GCM-SHA256:AES128-GCM-SHA256') }}
-
-{% if 'cert' in stunnel %}
-cert = {{ stunnel.get('cert', '') }}
-{% endif %}
-{% if 'key' in stunnel %}
-key = {{ stunnel.get('key', '') }}
-{% endif %}
-{% if 'ca' in stunnel %}
-CAfile = {{ stunnel.get('ca', '') }}
-{% endif %}
-
-verify = {{ stunnel.get('verify', '3') }}
-
-{% for option in stunnel.get('options', []) -%}
-options = {{ option }}
-{% endfor %}
-
-{% for service in stunnel.get('services', []) %}
-[ {{ service.get('name') }} ]
-client = {{ service.get('client') }}
-accept = {{ service.get('accept') }}
-connect = {{ service.get('connect') }}
-{% if service.get('nodelay') and service.get('client')=='yes' -%}
-socket = l:TCP_NODELAY=1
-{% elif service.get('nodelay') and service.get('client')=='no' -%}
-socket = r:TCP_NODELAY=1
+{% for key, value in stunnel.config.items() -%}
+{% if key != 'services' -%}
+{{ key }} = {{ value }}
 {% endif -%}
-{% endfor %}
+{% endfor -%}
+
+{% for name, service in stunnel.config.get('services', {}).items() %}
+[{{ name }}]
+{%- for key, value in service.items() %}
+{{ key }} = {{ value }}
+{%- endfor %}
+{%- endfor %}

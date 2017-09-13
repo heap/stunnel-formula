@@ -1,13 +1,20 @@
-{% set stunnel = salt['grains.filter_by']({
-    'Debian': {
-        'package': 'stunnel4',
-        'service': 'stunnel4',
-        'default_user': 'stunnel4',
-        'default_group': 'stunnel4',
-        'home': '/var/lib/stunnel4',
-        'conf_dir': '/etc/stunnel',
-        'log_dir': '/var/log/stunnel',
-        'default': '/etc/default/stunnel4',
-        'pid_dir': '/var/run/stunnel4'
-    },
-}, merge=salt['pillar.get']('stunnel:lookup'), default='Debian') %}
+{% set stunnel = salt['pillar.get']('stunnel', {
+    'lookup': salt['grains.filter_by']({
+        'Debian': {
+            'package': 'stunnel4',
+            'service': 'stunnel4',
+            'default_user': 'stunnel4',
+            'default_group': 'stunnel4',
+            'home': '/var/lib/stunnel4',
+            'conf_dir': '/etc/stunnel',
+            'log_dir': '/var/log/stunnel',
+            'default': '/etc/default/stunnel4',
+            'pid_dir': '/var/run/stunnel4'
+        }
+    }, default='Debian'),
+    'config': {
+        'pid': '/var/run/stunnel.pid',
+        'setuid': 'stunnel4',
+        'setgid': 'stunnel4'
+    }
+}, merge=True)%}

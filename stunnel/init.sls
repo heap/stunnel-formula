@@ -1,37 +1,35 @@
-{% from "stunnel/map.jinja" import stunnel as stunnel_map with context -%}
+{% from "stunnel/map.jinja" import stunnel with context -%}
 stunnel:
   pkg.installed:
-    - name: {{ stunnel_map.package }}
+    - name: {{ stunnel.lookup.package }}
 
-{{ stunnel_map.conf_dir }}:
+{{ stunnel.lookup.conf_dir }}:
   file.directory:
-    - user: {{ stunnel_map.default_user }}
-    - group: {{ stunnel_map.default_group }}
+    - user: {{ stunnel.lookup.default_user }}
+    - group: {{ stunnel.lookup.default_group }}
     - makedirs: True
 
-{{ stunnel_map.pid_dir }}:
+{{ stunnel.lookup.pid_dir }}:
   file.directory:
-    - user: {{ stunnel_map.default_user }}
+    - user: {{ stunnel.lookup.default_user }}
     - makedirs: True
 
-{% for service in salt['pillar.get']('stunnel:config:services', {}) %}
-{{ stunnel_map.conf_dir }}/stunnel.conf:
+{{ stunnel.lookup.conf_dir }}/stunnel.conf:
   file.managed:
     - template: jinja
-    - user: {{ stunnel_map.default_user }}
-    - group: {{ stunnel_map.default_group }}
+    - user: {{ stunnel.lookup.default_user }}
+    - group: {{ stunnel.lookup.default_group }}
     - mode: 644
     - source: salt://stunnel/templates/config.jinja
     - require:
-      - file: {{ stunnel_map.conf_dir }}
-{% endfor -%}
+      - file: {{ stunnel.lookup.conf_dir }}
 
-{{ stunnel_map.log_dir }}:
+{{ stunnel.lookup.log_dir }}:
   file.directory:
-    - user: {{ stunnel_map.default_user }}
+    - user: {{ stunnel.lookup.default_user }}
     - makedirs: True
 
-{{ stunnel_map.default }}:
+{{ stunnel.lookup.default }}:
   file.managed:
     - template: jinja
     - user: root
@@ -39,4 +37,4 @@ stunnel:
     - mode: 644
     - source: salt://stunnel/templates/default.jinja
     - context:
-      conf_dir: {{ stunnel_map.conf_dir }}
+      conf_dir: {{ stunnel.lookup.conf_dir }}

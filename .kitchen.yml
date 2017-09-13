@@ -1,0 +1,40 @@
+---
+driver:
+  name: vagrant
+
+platforms:
+  - name: trusty
+    driver_config:
+      box: ubuntu/trusty64
+  - name: xenial
+    driver_config:
+      box: boxcutter/ubuntu1604
+
+provisioner:
+  name: salt_solo
+  formula: 'stunnel'
+  require_chef: false
+  state_top:
+    base:
+      '*':
+        - stunnel
+
+verifier:
+  name: inspec
+
+suites:
+  - name: default
+    provisioner:
+      pillars:
+        top.sls:
+          base:
+            '*':
+              - stunnel
+        stunnel.sls:
+          stunnel:
+            config:
+              pid: /var/run/stunnel.pid
+              services:
+                redis:
+                  accept: 0.0.0.0:6380
+                  connect: 127.0.0.1:6379
