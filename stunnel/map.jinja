@@ -2,19 +2,25 @@
     'lookup': salt['grains.filter_by']({
         'Debian': {
             'package': 'stunnel4',
-            'service': 'stunnel4',
+            'service': 'stunnel',
             'default_user': 'stunnel4',
             'default_group': 'stunnel4',
             'home': '/var/lib/stunnel4',
             'conf_dir': '/etc/stunnel',
-            'log_dir': '/var/log/stunnel',
-            'default': '/etc/default/stunnel4',
-            'pid_dir': '/var/run/stunnel4'
+            'log_dir': '/var/log/stunnel'
         }
     }, default='Debian'),
     'config': {
-        'pid': '/var/run/stunnel.pid',
-        'setuid': 'stunnel4',
-        'setgid': 'stunnel4'
+        'pid': '/var/run/stunnel.pid'
     }
 }, merge=True)%}
+
+{% do stunnel.lookup.update(salt['grains.filter_by']({
+    'upstart': {
+        'init_file': '/etc/init/stunnel.conf'
+    },
+    'systemd': {
+        'init_file': '/etc/systemd/system/stunnel.service'
+    }
+}, grain='init'))
+%}

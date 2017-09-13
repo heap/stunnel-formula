@@ -1,0 +1,22 @@
+{% from "stunnel/map.jinja" import stunnel with context -%}
+# THIS FILE IS MANAGED BY SALT. DO NOT EDIT DIRECTLY
+description "Stunnel"
+
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+respawn limit 10 5
+
+console log
+
+expect fork
+exec /usr/bin/stunnel4 {{ stunnel.lookup.conf_dir }}/stunnel.conf
+
+# The main stunnel process is actually the last launched. Killing the pid
+# tracked by upstart leaves this process running. This is dirty but
+# without being able to track a pid file it's the easiest option
+post-stop script
+  kill -9 $(cat {{ stunnel.config.pid }})
+end script
+

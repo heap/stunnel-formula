@@ -36,5 +36,6 @@ suites:
               pid: /var/run/stunnel.pid
               services:
                 redis:
+                  client: 'yes'
                   accept: 0.0.0.0:6380
                   connect: 127.0.0.1:6379

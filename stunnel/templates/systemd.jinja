@@ -1,0 +1,15 @@
+{% from "stunnel/map.jinja" import stunnel with context -%}
+# THIS FILE IS MANAGED BY SALT. DO NOT EDIT DIRECTLY
+[Unit]
+Description=Stunnel daemon
+After=network.target
+
+[Service]
+Type=forking
+PIDFile={{stunnel.config.pid}}
+ExecStart=/usr/bin/stunnel4 {{ stunnel.lookup.conf_dir }}/stunnel.conf
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
