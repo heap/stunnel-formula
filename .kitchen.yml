@@ -32,6 +32,8 @@ suites:
               - stunnel
         stunnel.sls:
           stunnel:
+            lookup:
+              open_file_limit: 4096
             config:
               pid: /var/run/stunnel.pid
               services:
