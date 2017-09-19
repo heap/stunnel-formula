@@ -10,6 +10,7 @@ PIDFile={{stunnel.config.pid}}
 ExecStart=/usr/bin/stunnel4 {{ stunnel.lookup.conf_dir }}/stunnel.conf
 Restart=always
 RestartSec=5s
+LimitNOFILE={{stunnel.lookup.open_file_limit}}
 
 [Install]
 WantedBy=multi-user.target
