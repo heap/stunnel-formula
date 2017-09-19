@@ -12,7 +12,7 @@ console log
 
 expect fork
 exec /usr/bin/stunnel4 {{ stunnel.lookup.conf_dir }}/stunnel.conf
-limit nofile 65536 65536
+limit nofile {{stunnel.lookup.open_file_limit}} {{stunnel.lookup.open_file_limit}}
 
 # The main stunnel process is actually the last launched. Killing the pid
 # tracked by upstart leaves this process running. This is dirty but

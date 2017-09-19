@@ -16,12 +16,14 @@
     }
 }, merge=True)%}
 
-{% do stunnel.lookup.update(salt['grains.filter_by']({
+{% set lookup = salt['pillar.get']('stunnel:lookup', salt['grains.filter_by']({
     'upstart': {
         'init_file': '/etc/init/stunnel.conf'
     },
     'systemd': {
         'init_file': '/etc/systemd/system/stunnel.service'
     }
-}, grain='init'))
+}, grain='init'), merge=True)
 %}
+
+ {% do stunnel.lookup.update(lookup) %}
